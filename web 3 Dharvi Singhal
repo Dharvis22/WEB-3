@@ -1,0 +1,70 @@
+#include <stdio.h>
+
+struct Car {
+    char make[50];
+    char model[50];
+    int year;
+    int speed;
+    int x;
+    int y;
+};
+
+void accelerate(struct Car *car, int speed_increment) {
+    car->speed += speed_increment;
+}
+
+void brake(struct Car *car, int speed_decrement) {
+    car->speed -= speed_decrement;
+}
+
+void move(struct Car *car) {
+    car->x += car->speed;
+    car->y += car->speed;
+}
+
+int detect_collision(struct Car *car1, struct Car *car2) {
+    if (car1->x == car2->x && car1->y == car2->y) {
+        return 1; // Collided
+    } else {
+        return 0; // Not collided
+    }
+}
+
+float time_to_collision(struct Car *car1, struct Car *car2) {
+    int relative_speed = car1->speed - car2->speed;
+    if (relative_speed == 0) {
+        return -1.0; // Cars are not moving relative to each other
+    }
+    float time = (float)sqrt((car1->x - car2->x)*(car1->x - car2->x)+(car1->y - car2->y)*(car1->y - car2->y)) / relative_speed;
+    return time;
+}
+
+int main() {
+    // Create two cars
+    struct Car car1 = {"Hyundai", "Alto", 2019, 60, 0, 0};
+    struct Car car2 = {"Maruti", "Creta", 2020, 50, 20, 0};
+    
+    // Accelerate car1
+    accelerate(&car1, 10);
+    
+    // Brake car2
+    brake(&car2, 20);
+    
+    // Move cars
+    move(&car1);
+    move(&car2);
+    
+    // Detect collision
+    int collision = detect_collision(&car1, &car2);
+    printf("Collision: %s\n", collision ? "False" : "True");
+    
+    // Calculate time to collision
+    float time = time_to_collision(&car1, &car2);
+    if (time == -1.0) {
+        printf("Time to Collision: Not applicable (cars are not moving relative to each other)\n");
+    } else {
+        printf("Time to Collision: %.2f hours\n", time);
+    }
+    
+    return 0;
+}
